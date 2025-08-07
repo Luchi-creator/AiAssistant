@@ -6,15 +6,23 @@ def run_tests():
     # print()
 
     print('--- Test 1 ---')
-    print(write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum"))
+    print(run_python_file("calculator", "main.py"))
     print()
 
     print('--- Test 2 ---')
-    print(write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"))
+    print(run_python_file("calculator", "main.py", ["3 + 5"]))
     print()
 
     print('--- Test 3 ---')
-    print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
+    print(run_python_file("calculator", "tests.py"))
+    print()
+    
+    print('--- Test 4 ---')
+    print(run_python_file("calculator", "../main.py"))
+    print()
+
+    print('--- Test 5 ---')
+    print(run_python_file("calculator", "nonexistent.py"))
     print()
 
 
