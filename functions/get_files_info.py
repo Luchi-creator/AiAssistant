@@ -117,6 +117,49 @@ def run_python_file(working_directory, file_path, args=[]):
     
 
 
+def call_function(function_call_part, verbose=False):
+    if verbose == True:
+        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+    else:
+        print(f" - Calling function: {function_call_part.name}")
+
+    function_map = {
+        "get_files_info": get_files_info,
+        "get_file_content":get_file_content,
+        "run_python_file":run_python_file,
+        "write_file":write_file
+    }
+
+    if function_call_part.name in function_map:
+        actual_function = function_map[function_call_part.name]
+
+        args = function_call_part.args  
+        args["working_directory"] = "./calculator"
+        
+        result = actual_function(**args)
+
+    else:
+        return types.Content(
+            role="tool",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_call_part.name,
+                    response={"error": f"Unknown function: {function_call_part.name}"},
+                )
+            ],
+        )
+    
+    
+    return types.Content(
+        role="tool",
+        parts=[
+            types.Part.from_function_response(
+                name=function_call_part.name,
+                response={"result": result},
+            )
+        ],
+    )    
+
 schema_get_files_info = types.FunctionDeclaration(
     name="get_files_info",
     description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
@@ -172,7 +215,6 @@ schema_run_python_file = types.FunctionDeclaration(
                 description="Optional list of command-line arguments to pass to the script."
             ),
         },
-        required=["working_directory", "file_path"]
     )
 )
 
