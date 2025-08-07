@@ -1,5 +1,7 @@
 import os
 import subprocess
+from google import genai
+from google.genai import types
 from functions.config import MAX_CHARS
 
 def get_files_info(working_directory, directory="."):
@@ -112,3 +114,88 @@ def run_python_file(working_directory, file_path, args=[]):
         
     except Exception as e:
         return f"Error: executing Python file: {e}"
+    
+
+
+schema_get_files_info = types.FunctionDeclaration(
+    name="get_files_info",
+    description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "directory": types.Schema(
+                type=types.Type.STRING,
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
+        },
+    ),
+)
+
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description="Reads the content of a specified file within the working directory. If the file is too large, the content is truncated at 10,000 characters.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "working_directory": types.Schema(
+                type=types.Type.STRING,
+                description="The base working directory. Only files within this directory can be accessed."
+            ),
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to the file relative to the working directory."
+            ),
+        },
+        required=["working_directory", "file_path"]
+    )
+)
+
+
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Executes a Python file within the working directory and captures stdout and stderr output.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "working_directory": types.Schema(
+                type=types.Type.STRING,
+                description="The base working directory. Only files within this directory can be executed."
+            ),
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to the Python file relative to the working directory."
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(type=types.Type.STRING),
+                description="Optional list of command-line arguments to pass to the script."
+            ),
+        },
+        required=["working_directory", "file_path"]
+    )
+)
+
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="Writes content to a file within the working directory. Creates directories as needed.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "working_directory": types.Schema(
+                type=types.Type.STRING,
+                description="The base working directory. The file must be inside this directory."
+            ),
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Path to the file relative to the working directory."
+            ),
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="The content to write into the file."
+            ),
+        },
+        required=["working_directory", "file_path", "content"]
+    )
+)
+
