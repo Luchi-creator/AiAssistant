@@ -1,21 +1,22 @@
-from functions.get_files_info import get_files_info
+from functions.get_files_info import *
 
 def run_tests():
+    # print('--- Test 1 ---')
+    # print(get_file_content("calculator", "lorem.txt"))
+    # print()
+
     print('--- Test 1 ---')
-    print(get_files_info("calculator", "."))
+    print(write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum"))
     print()
 
     print('--- Test 2 ---')
-    print(get_files_info("calculator", "pkg"))
+    print(write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"))
     print()
 
     print('--- Test 3 ---')
-    print(get_files_info("calculator", "/bin"))
+    print(write_file("calculator", "/tmp/temp.txt", "this should not be allowed"))
     print()
 
-    print('--- Test 4 ---')
-    print(get_files_info("calculator", "../"))
-    print()
 
 if __name__ == "__main__":
     run_tests()
